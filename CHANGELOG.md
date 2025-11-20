@@ -1,3 +1,9 @@
+## v0.1.12 (2025-11-20)
+
+### Fix
+
+- **.circleci/config.yml**: circle configuration version filtering (#39)
+
 ## v0.1.11 (2025-11-20)
 
 ### Fix
