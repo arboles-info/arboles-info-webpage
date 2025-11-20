@@ -159,8 +159,15 @@ workflows:
   # Los tags son creados automáticamente por GitHub Actions cuando se hace push a main
   # La verificación de que el tag está en main se hace en cada job
   build-on-tag:
-    # CircleCI ejecuta workflows automáticamente cuando detecta un tag
-    # No usamos filtros restrictivos - CircleCI detecta tags automáticamente
+    # IMPORTANTE: CircleCI requiere filtros explícitos de tags en los jobs
+    # para ejecutar workflows cuando se detecta un tag
     jobs:
-      - build-docker
+      - build-docker:
+          filters:
+            # Solo ejecutar para tags que empiezan con 'v' (ej: v0.1.11, v1.2.3)
+            tags:
+              only: /^v.*/
+            # Ignorar branches - solo ejecutar cuando hay un tag
+            branches:
+              ignore: /.*/
 
