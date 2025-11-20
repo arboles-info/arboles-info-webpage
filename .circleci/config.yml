@@ -1,4 +1,14 @@
 # CircleCI Configuration para Árboles Info Maps
+#
+# Flujo de CI/CD:
+# 1. Push a main → GitHub Actions (release.yml) valida commit y crea tag automáticamente
+# 2. Tag pusheado → CircleCI detecta el tag y ejecuta build-docker
+# 3. build-docker → Construye imagen Docker y la pushea a DigitalOcean Container Registry
+#
+# El workflow se ejecuta cuando:
+# - Se pushea un tag (principalmente, creado por GitHub Actions)
+# - Se hace push a main (sin tag, usa SHA del commit)
+#
 version: 2.1
 
 # Orbs para reutilizar configuraciones comunes
@@ -145,9 +155,16 @@ jobs:
 
 # Workflows
 workflows:
-  # Workflow principal: se ejecuta solo cuando se hace push de un tag
+  # Workflow principal: se ejecuta cuando se hace push de un tag
+  # Los tags son creados automáticamente por GitHub Actions cuando se hace push a main
   # La verificación de que el tag está en main se hace en cada job
-  main:
+  build-on-tag:
+    when:
+      or:
+        # Ejecutar cuando se pushea un tag (principalmente)
+        - tags
+        # También permitir ejecución manual o en pushes a main (sin tag, usa SHA)
+        - equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - build-docker
 
