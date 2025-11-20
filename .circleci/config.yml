@@ -91,6 +91,21 @@ jobs:
     steps:
       - checkout
       
+      # Configurar Docker remoto para poder usar comandos Docker
+      - setup_remote_docker:
+          version: 24.0.5
+      
+      # Instalar Docker client
+      - run:
+          name: Instalar Docker client
+          command: |
+            if ! command -v docker &> /dev/null; then
+              echo "Instalando Docker client..."
+              sudo apt-get update
+              sudo apt-get install -y docker.io
+            fi
+            docker --version
+      
       # Verificar que el tag está en la rama main
       - run:
           name: Verificar que el tag está en main
