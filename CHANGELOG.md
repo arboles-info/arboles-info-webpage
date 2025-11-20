@@ -1,3 +1,9 @@
+## v0.1.10 (2025-11-20)
+
+### Fix
+
+- **.config/circleci**: cicd simplified (#37)
+
 ## v0.1.9 (2025-11-20)
 
 ### Fix
