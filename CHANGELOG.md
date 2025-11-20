@@ -1,3 +1,9 @@
+## v0.1.15 (2025-11-20)
+
+### Fix
+
+- **app-spec.yaml**: fixes deployment command (#42)
+
 ## v0.1.14 (2025-11-20)
 
 ### Fix
