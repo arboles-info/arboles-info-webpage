@@ -1,3 +1,9 @@
+## v0.1.13 (2025-11-20)
+
+### Fix
+
+- **.circleci/config.yml**: circle configuration docker version (#40)
+
 ## v0.1.12 (2025-11-20)
 
 ### Fix
