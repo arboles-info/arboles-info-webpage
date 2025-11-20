@@ -6,11 +6,15 @@ services:
   - name: web
     # Usar la imagen Docker del registry de DigitalOcean
     # La imagen se construye y pushea automáticamente en CircleCI cuando se crea un tag
+    # IMPORTANTE: Al usar una imagen Docker pre-construida, NO configuramos build
     image:
       registry_type: DOCR
       registry: registry.digitalocean.com
       repository: arboles-info/arboles-info-maps
       tag: latest  # Usa 'latest' (siempre la última versión) o un tag específico como 'v0.1.12'
+    
+    # NO configurar build cuando usas una imagen Docker pre-construida
+    # DigitalOcean intentará ejecutar comandos de build si se configura, causando errores como "cd: src: No such file or directory"
     
     # Configuración del servicio
     instance_count: 1  # Número de instancias (aumentar para alta disponibilidad)
@@ -19,11 +23,11 @@ services:
     # Health check - verifica que la aplicación esté respondiendo
     health_check:
       http_path: /
-      initial_delay_seconds: 40  # Tiempo de espera inicial (el Dockerfile tiene start-period de 40s)
+      initial_delay_seconds: 60  # Aumentado para dar más tiempo a que la app inicie (Gunicorn puede tardar)
       period_seconds: 30  # Intervalo entre checks
       timeout_seconds: 10  # Timeout para cada check
       success_threshold: 1  # Checks exitosos necesarios para considerar healthy
-      failure_threshold: 3  # Checks fallidos antes de marcar como unhealthy
+      failure_threshold: 5  # Aumentado para dar más oportunidades antes de marcar como unhealthy
     
     # Variables de entorno requeridas por Django
     envs:
@@ -52,9 +56,9 @@ services:
         scope: RUN_TIME
         type: SECRET
     
-    # Comando de inicio (ya está definido en el Dockerfile, no es necesario aquí)
-    # El Dockerfile ejecuta: gunicorn arboles_info_project.wsgi:application
-    # run_command: gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:${PORT} --workers 2 --threads 2 --timeout 120
+    # Comando de inicio - especificar explícitamente para evitar que DigitalOcean intente builds automáticos
+    # El Dockerfile ya tiene el CMD, pero lo especificamos aquí para mayor claridad
+    run_command: gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:${PORT} --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile -
     
     # Configuración HTTP
     http_port: 8080
@@ -70,11 +74,9 @@ services:
       trigger:
         type: manual  # Cambiar a 'webhook' para deployment automático
       
-      # Comandos que se ejecutan antes del deployment (opcional)
-      # Útiles para migraciones de base de datos, etc.
-      # pre_deploy_commands:
-      #   - echo "Running pre-deployment checks..."
-      #   - python manage.py migrate --noinput || true
+      # NO usar pre_deploy_commands cuando usas imágenes Docker pre-construidas
+      # DigitalOcean intentará ejecutar estos comandos y puede causar errores como "cd: src: No such file or directory"
+      # Si necesitas migraciones, ejecútalas dentro del contenedor o en el Dockerfile
     
     # Límites de recursos (ajustar según necesidades)
     resource_limits:
