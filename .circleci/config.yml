@@ -27,8 +27,8 @@ jobs:
       - checkout
       
       # Configurar Docker remoto para poder usar comandos Docker
-      - setup_remote_docker:
-          version: 24.0.5
+      # No especificamos versión para usar la versión por defecto compatible
+      - setup_remote_docker
       
       # Instalar Docker client
       - run:
