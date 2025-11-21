@@ -55,9 +55,8 @@ EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD python -c "import os, urllib.request; port = os.environ.get('PORT', '8080'); urllib.request.urlopen(f'http://localhost:{port}/')" || exit 1
+    CMD python -c "import urllib.request; urllib.request.urlopen(f'http://localhost:8080/')" || exit 1
 
 # Comando por defecto (puede ser sobrescrito)
-# Usar sh -c para expandir la variable de entorno PORT correctamente
-CMD ["sh", "-c", "exec gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:${PORT:-8080} --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile -"]
+CMD ["sh", "-c", "exec gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:8080 --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile -"]
 
