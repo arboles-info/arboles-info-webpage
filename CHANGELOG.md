@@ -1,3 +1,9 @@
+## v0.1.17 (2025-11-21)
+
+### Fix
+
+- **Dockerfile**: removes PORT variable (#45)
+
 ## v0.1.16 (2025-11-21)
 
 ### Fix
