@@ -1,3 +1,9 @@
+## v0.1.16 (2025-11-21)
+
+### Fix
+
+- **app-spec.yaml**: deletes run command (#44)
+
 ## v0.1.15 (2025-11-20)
 
 ### Fix
