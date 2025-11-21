@@ -41,8 +41,6 @@ services:
         scope: RUN_TIME
         type: SECRET
     
-    run_command: gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:${PORT} --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile -
-    
     http_port: 8080
     routes:
       - path: /
