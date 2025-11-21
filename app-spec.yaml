@@ -1,35 +1,25 @@
 name: arboles-info-maps
 region: ams
 
-# Configuración de la aplicación
 services:
   - name: web
-    # Usar la imagen Docker del registry de DigitalOcean
-    # La imagen se construye y pushea automáticamente en CircleCI cuando se crea un tag
-    # IMPORTANTE: Al usar una imagen Docker pre-construida, NO configuramos build
     image:
       registry_type: DOCR
-      registry: registry.digitalocean.com
-      repository: arboles-info/arboles-info-maps
-      tag: latest  # Usa 'latest' (siempre la última versión) o un tag específico como 'v0.1.12'
+      registry: arboles-info
+      repository: arboles-info-maps
+      tag: latest
     
-    # NO configurar build cuando usas una imagen Docker pre-construida
-    # DigitalOcean intentará ejecutar comandos de build si se configura, causando errores como "cd: src: No such file or directory"
+    instance_count: 1
+    instance_size_slug: basic-xs
     
-    # Configuración del servicio
-    instance_count: 1  # Número de instancias (aumentar para alta disponibilidad)
-    instance_size_slug: basic-xxs  # Opciones: basic-xxs, basic-xs, basic-s, basic-m, etc.
-    
-    # Health check - verifica que la aplicación esté respondiendo
     health_check:
       http_path: /
-      initial_delay_seconds: 60  # Aumentado para dar más tiempo a que la app inicie (Gunicorn puede tardar)
-      period_seconds: 30  # Intervalo entre checks
-      timeout_seconds: 10  # Timeout para cada check
-      success_threshold: 1  # Checks exitosos necesarios para considerar healthy
-      failure_threshold: 5  # Aumentado para dar más oportunidades antes de marcar como unhealthy
+      initial_delay_seconds: 60
+      period_seconds: 30
+      timeout_seconds: 10
+      success_threshold: 1
+      failure_threshold: 5
     
-    # Variables de entorno requeridas por Django
     envs:
       - key: PORT
         value: "8080"
@@ -37,78 +27,22 @@ services:
         type: GENERAL
       
       - key: DEBUG
-        value: "False"  # IMPORTANTE: False en producción, True solo para desarrollo
+        value: "False"
         scope: RUN_TIME
         type: GENERAL
       
       - key: ALLOWED_HOSTS
-        # Se reemplazará automáticamente con el dominio de la app de DigitalOcean
-        # También puedes especificar dominios adicionales separados por comas
         value: "${APP_DOMAIN}"
         scope: RUN_TIME
         type: GENERAL
       
-      # SECRET_KEY: Configurar como variable secreta en DigitalOcean App Platform
-      # NO incluyas el valor aquí. Configúrala en:
-      # DigitalOcean Dashboard → App Platform → Settings → App-Level Environment Variables
       - key: SECRET_KEY
-        value: "${SECRET_KEY}"  # Debe configurarse en el panel de DigitalOcean
+        value: "${SECRET_KEY}"
         scope: RUN_TIME
         type: SECRET
     
-    # Comando de inicio - especificar explícitamente para evitar que DigitalOcean intente builds automáticos
-    # El Dockerfile ya tiene el CMD, pero lo especificamos aquí para mayor claridad
     run_command: gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:${PORT} --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile -
     
-    # Configuración HTTP
     http_port: 8080
     routes:
-      - path: /  # Todas las rutas van al servicio web
-    
-    # Configuración de deployment
-    deployment:
-      # Opciones: 'manual' (despliegue manual) o 'webhook' (automático)
-      # Para deployment automático cuando se pushea un nuevo tag:
-      # 1. Cambia 'type: manual' a 'type: webhook'
-      # 2. Configura el webhook en CircleCI para llamar a DigitalOcean cuando se complete el build
-      trigger:
-        type: manual  # Cambiar a 'webhook' para deployment automático
-      
-      # NO usar pre_deploy_commands cuando usas imágenes Docker pre-construidas
-      # DigitalOcean intentará ejecutar estos comandos y puede causar errores como "cd: src: No such file or directory"
-      # Si necesitas migraciones, ejecútalas dentro del contenedor o en el Dockerfile
-    
-    # Límites de recursos (ajustar según necesidades)
-    resource_limits:
-      cpu_count: 500  # 0.5 vCPU (mínimo: 250, máximo según plan)
-      memory_mb: 512  # 512 MB RAM (mínimo: 512, máximo según plan)
-
-# Configuración de base de datos (opcional - descomentar si necesitas PostgreSQL)
-# NOTA: Actualmente la app usa SQLite (archivo local). Para producción, se recomienda PostgreSQL.
-# Si descomentas esto, también necesitarás:
-# 1. Actualizar DATABASES en settings.py para usar PostgreSQL
-# 2. Instalar psycopg2 en requirements.txt
-# 3. Configurar variables de entorno para la conexión a la BD
-#
-# databases:
-#   - name: arboles-info-db
-#     engine: PG
-#     version: "15"
-#     production: false
-#     cluster_name: arboles-info-db-cluster
-#     db_name: arboles_info
-#     db_user: arboles_info_user
-
-# Configuración de dominio (opcional)
-# domains:
-#   - domain: arboles-info-maps.example.com
-#     type: PRIMARY
-#     certificate: letsencrypt
-
-# Configuración de alertas (opcional)
-# alerts:
-#   - rule: DEPLOYMENT_FAILED
-#     disabled: false
-#   - rule: DOMAIN_FAILED
-#     disabled: false
-
+      - path: /
