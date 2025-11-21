@@ -28,7 +28,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-f_eh7@w+@x-(yb9!^59e)
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # Por defecto permite localhost para desarrollo
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else ['localhost', '127.0.0.1']
+# En producción, permite IPs internas de DigitalOcean App Platform para health checks
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+    # Si '*' está en la lista, permitir todos los hosts (útil para App Platform health checks)
+    if '*' in ALLOWED_HOSTS:
+        ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition

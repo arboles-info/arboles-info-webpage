@@ -32,7 +32,7 @@ services:
         type: GENERAL
       
       - key: ALLOWED_HOSTS
-        value: "${APP_DOMAIN}"
+        value: "${APP_DOMAIN},*"
         scope: RUN_TIME
         type: GENERAL
       
