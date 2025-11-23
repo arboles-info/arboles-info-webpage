@@ -1,7 +1,7 @@
 # Makefile para comandos de desarrollo y seguridad
 # Facilita la ejecución de scripts de seguridad y desarrollo
 
-.PHONY: help install-security-tools security-quick security-full security-install clean-security-reports test-local docker-build docker-build-ci docker-test docker-run docker-clean docker-logs docker-stop docker-stop-all compose-up compose-down compose-down-volumes compose-logs compose-ps compose-restart compose-db-shell compose-db-create-extensions compose-migrate compose-makemigrations compose-run compose-shell
+.PHONY: help install-security-tools security-quick security-full security-install clean-security-reports test-local docker-build docker-build-ci docker-test docker-run docker-clean docker-logs docker-stop docker-stop-all compose-up compose-up-build compose-down compose-down-volumes compose-logs compose-ps compose-restart compose-db-shell compose-db-create-extensions compose-migrate compose-makemigrations compose-run compose-shell
 
 # Variables
 PYTHON := python3
@@ -492,6 +492,17 @@ compose-up: ## Iniciar servicios con Docker Compose
 	fi
 	@docker compose -f $(COMPOSE_FILE) up -d
 	@echo "$(GREEN)✅ Servicios iniciados$(NC)"
+	@echo "$(YELLOW)💡 Para ver logs: make compose-logs$(NC)"
+	@echo "$(YELLOW)💡 Para detener: make compose-down$(NC)"
+
+compose-up-build: ## Reconstruir e iniciar servicios con Docker Compose
+	@echo "$(GREEN)🔨 Reconstruyendo e iniciando servicios con Docker Compose...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) up -d --build
+	@echo "$(GREEN)✅ Servicios reconstruidos e iniciados$(NC)"
 	@echo "$(YELLOW)💡 Para ver logs: make compose-logs$(NC)"
 	@echo "$(YELLOW)💡 Para detener: make compose-down$(NC)"
 
