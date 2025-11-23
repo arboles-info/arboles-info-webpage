@@ -172,10 +172,13 @@ LOGGING = {
 }
 
 # Security settings for production
+# NOTA: SECURE_SSL_REDIRECT está desactivado porque DigitalOcean App Platform
+# maneja SSL/TLS en el load balancer. El tráfico externo ya viene por HTTPS.
+# Los health checks internos usan HTTP y no deben ser redirigidos.
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = False  # Desactivado: DigitalOcean maneja SSL en el load balancer
+    SESSION_COOKIE_SECURE = True  # Mantener cookies seguras (el load balancer envía HTTPS)
+    CSRF_COOKIE_SECURE = True  # Mantener cookies CSRF seguras
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
