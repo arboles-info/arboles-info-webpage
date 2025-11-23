@@ -1,3 +1,9 @@
+## v0.1.19 (2025-11-23)
+
+### Fix
+
+- **settings.py**: changes SSL behaviour (#47)
+
 ## v0.1.18 (2025-11-21)
 
 ### Fix
