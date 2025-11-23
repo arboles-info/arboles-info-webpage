@@ -1,3 +1,9 @@
+## v0.2.0 (2025-11-23)
+
+### Feat
+
+- adds a middleware for production ALLOWED_HOSTS (#48)
+
 ## v0.1.19 (2025-11-23)
 
 ### Fix
