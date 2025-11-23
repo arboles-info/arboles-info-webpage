@@ -43,6 +43,9 @@ COPY --from=builder /root/.local /home/appuser/.local
 # Copiar código de la aplicación
 COPY --chown=appuser:appuser . .
 
+# Crear directorio staticfiles con permisos para appuser
+RUN mkdir -p /app/staticfiles && chown -R appuser:appuser /app/staticfiles
+
 # Cambiar a usuario no-root
 USER appuser
 
