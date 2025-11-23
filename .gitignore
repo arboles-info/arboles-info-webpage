@@ -151,3 +151,6 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# Docker volumes
+postgres_data/

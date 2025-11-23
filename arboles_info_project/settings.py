@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',  # GeoDjango para PostGIS
     'maps',
 ]
 
@@ -85,12 +86,63 @@ WSGI_APPLICATION = 'arboles_info_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Usar PostgreSQL con PostGIS si están configuradas las variables de entorno
+# De lo contrario, usar SQLite para desarrollo local sin Docker
+db_host = os.environ.get('DB_HOST', '')
+db_name = os.environ.get('DB_NAME', '')
+db_user = os.environ.get('DB_USER', '')
+db_password = os.environ.get('DB_PASSWORD', '')
+db_port = os.environ.get('DB_PORT', '5432')
+
+if db_host and db_name and db_user and db_password:
+    # Configuración para PostgreSQL con PostGIS
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',
+            'NAME': db_name,
+            'USER': db_user,
+            'PASSWORD': db_password,
+            'HOST': db_host,
+            'PORT': db_port,
+            'OPTIONS': {
+                'connect_timeout': 10,
+            },
+        }
     }
-}
+else:
+    # Configuración por defecto: SQLite (para desarrollo local sin Docker)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# GeoDjango configuration
+# Configurar rutas de librerías GDAL si es necesario
+# En Docker con python3-gdal instalado, Django debería detectarlas automáticamente
+# pero podemos configurarlas explícitamente si hay problemas
+import os
+import glob
+
+# Intentar encontrar la librería GDAL en ubicaciones comunes
+gdal_library_paths = [
+    '/usr/lib/x86_64-linux-gnu/libgdal.so*',
+    '/usr/lib/libgdal.so*',
+    '/usr/local/lib/libgdal.so*',
+]
+
+GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH', None)
+if not GDAL_LIBRARY_PATH:
+    for pattern in gdal_library_paths:
+        matches = glob.glob(pattern)
+        if matches:
+            # Tomar la primera coincidencia (puede haber versiones)
+            GDAL_LIBRARY_PATH = sorted(matches)[-1]  # Tomar la versión más reciente
+            break
+
+# GEOS y PROJ también pueden necesitar configuración explícita
+# pero generalmente se detectan automáticamente con las librerías del sistema instaladas
 
 
 # Password validation

@@ -31,6 +31,15 @@ ENV PYTHONUNBUFFERED=1 \
     PATH="/home/appuser/.local/bin:$PATH" \
     PORT=8080
 
+# Instalar dependencias del sistema para GeoDjango (GDAL, GEOS, PROJ)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gdal-bin \
+    libgdal-dev \
+    python3-gdal \
+    libgeos-dev \
+    libproj-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Crear usuario no-root para seguridad
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
