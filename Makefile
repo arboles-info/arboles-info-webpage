@@ -1,7 +1,7 @@
 # Makefile para comandos de desarrollo y seguridad
 # Facilita la ejecución de scripts de seguridad y desarrollo
 
-.PHONY: help install-security-tools security-quick security-full security-install clean-security-reports test-local docker-build docker-build-ci docker-test docker-run docker-clean docker-logs docker-stop docker-stop-all
+.PHONY: help install-security-tools security-quick security-full security-install clean-security-reports test-local docker-build docker-build-ci docker-test docker-run docker-clean docker-logs docker-stop docker-stop-all compose-up compose-down compose-down-volumes compose-logs compose-ps compose-restart compose-db-shell compose-db-create-extensions compose-migrate compose-makemigrations compose-run compose-shell
 
 # Variables
 PYTHON := python3
@@ -479,6 +479,136 @@ docker-stop-all: ## Detener y eliminar todos los contenedores (incluso detenidos
 	else \
 		echo "$$CONTAINERS" | xargs docker rm -f 2>/dev/null || true; \
 		echo "$(GREEN)✅ Contenedores eliminados$(NC)"; \
+	fi
+
+# Comandos de Docker Compose
+COMPOSE_FILE := compose.yaml
+
+compose-up: ## Iniciar servicios con Docker Compose
+	@echo "$(GREEN)🚀 Iniciando servicios con Docker Compose...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) up -d
+	@echo "$(GREEN)✅ Servicios iniciados$(NC)"
+	@echo "$(YELLOW)💡 Para ver logs: make compose-logs$(NC)"
+	@echo "$(YELLOW)💡 Para detener: make compose-down$(NC)"
+
+compose-down: ## Detener servicios de Docker Compose
+	@echo "$(YELLOW)🛑 Deteniendo servicios de Docker Compose...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) down
+	@echo "$(GREEN)✅ Servicios detenidos$(NC)"
+
+compose-down-volumes: ## Detener servicios y eliminar volúmenes de Docker Compose
+	@echo "$(YELLOW)🧹 Deteniendo servicios y eliminando volúmenes...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) down -v
+	@echo "$(GREEN)✅ Servicios detenidos y volúmenes eliminados$(NC)"
+
+compose-logs: ## Ver logs de servicios de Docker Compose
+	@echo "$(YELLOW)📋 Logs de servicios:$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) logs -f
+
+compose-ps: ## Ver estado de servicios de Docker Compose
+	@echo "$(YELLOW)📊 Estado de servicios:$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) ps
+
+compose-restart: ## Reiniciar servicios de Docker Compose
+	@echo "$(YELLOW)🔄 Reiniciando servicios...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) restart
+	@echo "$(GREEN)✅ Servicios reiniciados$(NC)"
+
+compose-db-shell: ## Acceder a shell de PostgreSQL
+	@echo "$(YELLOW)🐘 Accediendo a PostgreSQL...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) exec db psql -U arboles_user -d arboles_info
+
+compose-db-create-extensions: ## Crear extensiones PostGIS en la base de datos
+	@echo "$(YELLOW)🗺️  Creando extensiones PostGIS...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) exec -T db psql -U arboles_user -d arboles_info -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+	@docker compose -f $(COMPOSE_FILE) exec -T db psql -U arboles_user -d arboles_info -c "CREATE EXTENSION IF NOT EXISTS postgis_topology;"
+	@echo "$(GREEN)✅ Extensiones PostGIS creadas$(NC)"
+
+compose-migrate: check-app-deps ## Ejecutar migraciones con base de datos de Docker Compose
+	@echo "$(YELLOW)🔄 Ejecutando migraciones con base de datos de Docker Compose...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(YELLOW)💡 Asegúrate de que los servicios estén corriendo: make compose-up$(NC)"
+	@export DB_HOST=localhost DB_PORT=5432 DB_NAME=arboles_info DB_USER=arboles_user DB_PASSWORD=arboles_password; \
+	if [ -f "$(VENV_BIN)/python" ]; then \
+		$(PYTHON_VENV) $(MANAGE) migrate; \
+	else \
+		$(PYTHON) $(MANAGE) migrate; \
+	fi
+	@echo "$(GREEN)✅ Migraciones ejecutadas$(NC)"
+
+compose-makemigrations: check-app-deps ## Crear migraciones con base de datos de Docker Compose
+	@echo "$(YELLOW)📝 Creando migraciones...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@export DB_HOST=localhost DB_PORT=5432 DB_NAME=arboles_info DB_USER=arboles_user DB_PASSWORD=arboles_password; \
+	if [ -f "$(VENV_BIN)/python" ]; then \
+		$(PYTHON_VENV) $(MANAGE) makemigrations; \
+	else \
+		$(PYTHON) $(MANAGE) makemigrations; \
+	fi
+	@echo "$(GREEN)✅ Migraciones creadas$(NC)"
+
+compose-run: check-app-deps compose-up ## Ejecutar aplicación Django con base de datos de Docker Compose
+	@echo "$(GREEN)🚀 Levantando Árboles Info Maps con Docker Compose...$(NC)"
+	@echo "$(YELLOW)📱 Aplicación disponible en:$(NC)"
+	@echo "$(BLUE)   - http://localhost:$(PORT)$(NC)"
+	@echo "$(BLUE)   - http://127.0.0.1:$(PORT)$(NC)"
+	@echo "$(YELLOW)⏹️  Presiona Ctrl+C para detener$(NC)"
+	@export DB_HOST=localhost DB_PORT=5432 DB_NAME=arboles_info DB_USER=arboles_user DB_PASSWORD=arboles_password; \
+	if [ -f "$(VENV_BIN)/python" ]; then \
+		$(PYTHON_VENV) $(MANAGE) runserver $(HOST):$(PORT); \
+	else \
+		$(PYTHON) $(MANAGE) runserver $(HOST):$(PORT); \
+	fi
+
+compose-shell: check-app-deps ## Acceder a shell de Django con base de datos de Docker Compose
+	@echo "$(YELLOW)🐚 Accediendo a shell de Django...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@export DB_HOST=localhost DB_PORT=5432 DB_NAME=arboles_info DB_USER=arboles_user DB_PASSWORD=arboles_password; \
+	if [ -f "$(VENV_BIN)/python" ]; then \
+		$(PYTHON_VENV) $(MANAGE) shell; \
+	else \
+		$(PYTHON) $(MANAGE) shell; \
 	fi
 
 # Comando por defecto
