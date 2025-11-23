@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgis/postgis:16-3.4
+    image: postgis/postgis:18-3.6
     container_name: arboles-info-db
     environment:
       POSTGRES_DB: arboles_info
@@ -28,7 +28,13 @@ services:
     command: >
       sh -c "
         python manage.py migrate --noinput &&
-        exec gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:8080 --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile -
+        if [ \"$$DEBUG\" = \"True\" ]; then
+          echo \"Running in development mode with watchdog\"
+          python manage.py runserver_plus 0.0.0.0:8080 --nothreading
+        else
+          echo \"Running in production mode\"
+          exec gunicorn arboles_info_project.wsgi:application --bind 0.0.0.0:8080 --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile -
+        fi
       "
     environment:
       DB_HOST: db
@@ -37,10 +43,15 @@ services:
       DB_USER: arboles_user
       DB_PASSWORD: arboles_password
       SECRET_KEY: ${SECRET_KEY:-django-insecure-change-me-in-production}
-      DEBUG: ${DEBUG:-False}
+      DEBUG: "True"
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
       PORT: 8080
     volumes:
+      # Montar el código fuente para desarrollo (cambios se reflejan sin reconstruir)
+      - .:/app
+      # Excluir staticfiles del montaje del host (usar volumen dedicado)
+      - /app/staticfiles
+      # Volumen para staticfiles (generados por collectstatic)
       - staticfiles:/app/staticfiles
     ports:
       - "8000:8080"
@@ -51,7 +62,7 @@ services:
     networks:
       - arboles-network
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health/')"]
       interval: 30s
       timeout: 10s
       start_period: 40s

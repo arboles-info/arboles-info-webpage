@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',  # GeoDjango para PostGIS
+    'django_extensions',  # Utilidades de desarrollo (runserver_plus con watchdog)
     'maps',
 ]
 
