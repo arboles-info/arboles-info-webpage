@@ -1,3 +1,9 @@
+## v0.3.0 (2025-11-23)
+
+### Feat
+
+- added compose and postgis in local environment (#51)
+
 ## v0.2.2 (2025-11-23)
 
 ### Fix
