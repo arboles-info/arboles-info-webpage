@@ -1,3 +1,9 @@
+## v0.2.2 (2025-11-23)
+
+### Fix
+
+- **Dockerfile**: fixes error with static folder when collectstatic (#50)
+
 ## v0.2.1 (2025-11-23)
 
 ### Fix
