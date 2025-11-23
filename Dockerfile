@@ -46,9 +46,10 @@ COPY --chown=appuser:appuser . .
 # Cambiar a usuario no-root
 USER appuser
 
-# Recopilar archivos estáticos (se puede hacer en build o runtime)
+# Recopilar archivos estáticos para WhiteNoise
 # Necesitamos SECRET_KEY y DEBUG para collectstatic
-RUN SECRET_KEY=dummy DEBUG=True python manage.py collectstatic --noinput || true
+# WhiteNoise requiere que collectstatic se ejecute correctamente
+RUN SECRET_KEY=dummy DEBUG=False python manage.py collectstatic --noinput
 
 # Exponer puerto (usar valor por defecto si PORT no está definido)
 EXPOSE 8080

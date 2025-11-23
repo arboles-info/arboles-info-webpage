@@ -3,3 +3,4 @@ httpx>=0.25.2
 pydantic>=2.5.0
 python-multipart>=0.0.6
 gunicorn>=21.2.0
+whitenoise>=6.6.0
