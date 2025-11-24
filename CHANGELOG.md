@@ -1,3 +1,9 @@
+## v0.3.2 (2025-11-24)
+
+### Fix
+
+- **Makefile**: Makefile compsose-migrate target (#54)
+
 ## v0.3.1 (2025-11-23)
 
 ### Fix
