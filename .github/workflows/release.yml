@@ -16,7 +16,7 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Necesario para obtener el historial completo de commits
         # Usar PAT si está disponible (necesario para ramas protegidas), sino usar GITHUB_TOKEN
