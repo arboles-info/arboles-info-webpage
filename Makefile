@@ -1,7 +1,7 @@
 # Makefile para comandos de desarrollo y seguridad
 # Facilita la ejecución de scripts de seguridad y desarrollo
 
-.PHONY: help install-security-tools security-quick security-full security-install clean-security-reports test-local docker-build docker-build-ci docker-test docker-run docker-clean docker-logs docker-stop docker-stop-all compose-up compose-up-build compose-down compose-down-volumes compose-logs compose-ps compose-restart compose-db-shell compose-db-create-extensions compose-migrate compose-makemigrations compose-run compose-shell
+.PHONY: help install-security-tools security-quick security-full security-install clean-security-reports test-local docker-build docker-build-ci docker-test docker-run docker-clean docker-logs docker-stop docker-stop-all compose-up compose-up-build compose-down compose-down-volumes compose-logs compose-ps compose-restart compose-db-shell compose-db-create-extensions compose-migrate compose-makemigrations compose-run compose-exec compose-shell
 
 # Variables
 PYTHON := python3
@@ -567,33 +567,24 @@ compose-db-create-extensions: ## Crear extensiones PostGIS en la base de datos
 	@docker compose -f $(COMPOSE_FILE) exec -T db psql -U arboles_user -d arboles_info -c "CREATE EXTENSION IF NOT EXISTS postgis_topology;"
 	@echo "$(GREEN)✅ Extensiones PostGIS creadas$(NC)"
 
-compose-migrate: check-app-deps ## Ejecutar migraciones con base de datos de Docker Compose
+compose-migrate: ## Ejecutar migraciones con base de datos de Docker Compose
 	@echo "$(YELLOW)🔄 Ejecutando migraciones con base de datos de Docker Compose...$(NC)"
 	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
 		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
 		exit 1; \
 	fi
 	@echo "$(YELLOW)💡 Asegúrate de que los servicios estén corriendo: make compose-up$(NC)"
-	@export DB_HOST=localhost DB_PORT=5432 DB_NAME=arboles_info DB_USER=arboles_user DB_PASSWORD=arboles_password; \
-	if [ -f "$(VENV_BIN)/python" ]; then \
-		$(PYTHON_VENV) $(MANAGE) migrate; \
-	else \
-		$(PYTHON) $(MANAGE) migrate; \
-	fi
+	@docker compose -f $(COMPOSE_FILE) exec web python manage.py migrate --noinput
 	@echo "$(GREEN)✅ Migraciones ejecutadas$(NC)"
 
-compose-makemigrations: check-app-deps ## Crear migraciones con base de datos de Docker Compose
+compose-makemigrations: ## Crear migraciones con base de datos de Docker Compose
 	@echo "$(YELLOW)📝 Creando migraciones...$(NC)"
 	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
 		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
 		exit 1; \
 	fi
-	@export DB_HOST=localhost DB_PORT=5432 DB_NAME=arboles_info DB_USER=arboles_user DB_PASSWORD=arboles_password; \
-	if [ -f "$(VENV_BIN)/python" ]; then \
-		$(PYTHON_VENV) $(MANAGE) makemigrations; \
-	else \
-		$(PYTHON) $(MANAGE) makemigrations; \
-	fi
+	@echo "$(YELLOW)💡 Asegúrate de que los servicios estén corriendo: make compose-up$(NC)"
+	@docker compose -f $(COMPOSE_FILE) exec web python manage.py makemigrations
 	@echo "$(GREEN)✅ Migraciones creadas$(NC)"
 
 compose-run: check-app-deps compose-up ## Ejecutar aplicación Django con base de datos de Docker Compose
@@ -609,18 +600,21 @@ compose-run: check-app-deps compose-up ## Ejecutar aplicación Django con base d
 		$(PYTHON) $(MANAGE) runserver $(HOST):$(PORT); \
 	fi
 
+compose-exec: ## Ejecutar shell del sistema en el contenedor web
+	@echo "$(YELLOW)🐚 Accediendo a shell del contenedor...$(NC)"
+	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
+		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
+		exit 1; \
+	fi
+	@docker compose -f $(COMPOSE_FILE) exec web sh
+
 compose-shell: check-app-deps ## Acceder a shell de Django con base de datos de Docker Compose
 	@echo "$(YELLOW)🐚 Accediendo a shell de Django...$(NC)"
 	@if [ ! -f "$(COMPOSE_FILE)" ]; then \
 		echo "$(RED)❌ No se encontró $(COMPOSE_FILE)$(NC)"; \
 		exit 1; \
 	fi
-	@export DB_HOST=localhost DB_PORT=5432 DB_NAME=arboles_info DB_USER=arboles_user DB_PASSWORD=arboles_password; \
-	if [ -f "$(VENV_BIN)/python" ]; then \
-		$(PYTHON_VENV) $(MANAGE) shell; \
-	else \
-		$(PYTHON) $(MANAGE) shell; \
-	fi
+	@docker compose -f $(COMPOSE_FILE) exec web python manage.py shell
 
 # Comando por defecto
 .DEFAULT_GOAL := help
