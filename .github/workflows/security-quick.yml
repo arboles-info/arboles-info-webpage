@@ -38,13 +38,13 @@ jobs:
         echo "Checking for common security issues..."
         
         # Verificar que no hay contraseñas hardcodeadas
-        if grep -r -i "password.*=" . --include="*.py" --include="*.js" --include="*.html" | grep -v "password.*None" | grep -v "password.*''"; then
+        if grep -r -i "password.*=" . --include="*.py" --include="*.js" --include="*.html" | grep -v "password.*None" | grep -v "password.*''" | grep -v "AUTH_PASSWORD_VALIDATORS"; then
           echo "WARNING: Potential hardcoded passwords found"
           exit 1
         fi
         
         # Verificar que no hay tokens de API hardcodeados
-        if grep -r -E "(api[_-]?key|token|secret)" . --include="*.py" --include="*.js" | grep -v "TODO\|FIXME\|example\|placeholder"; then
+        if grep -r -E "(api[_-]?key|token|secret)" . --include="*.py" --include="*.js" | grep -v "TODO\|FIXME\|example\|placeholder" | grep -v "keep the secret key used in production secret!"; then
           echo "WARNING: Potential hardcoded API keys or tokens found"
           exit 1
         fi
