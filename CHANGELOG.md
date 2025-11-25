@@ -1,3 +1,9 @@
+## v0.4.0 (2025-11-25)
+
+### Feat
+
+- **templates/base.html**: added contact to footer component (#59)
+
 ## v0.3.2 (2025-11-24)
 
 ### Fix
