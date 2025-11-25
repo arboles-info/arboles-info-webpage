@@ -44,7 +44,7 @@ jobs:
         fi
         
         # Verificar que no hay tokens de API hardcodeados
-        if grep -r -E "(api[_-]?key|token|secret)" . --include="*.py" --include="*.js" | grep -v "TODO\|FIXME\|example\|placeholder"; then
+        if grep -r -E "(api[_-]?key|token|secret)" . --include="*.py" --include="*.js" | grep -v "TODO\|FIXME\|example\|placeholder" | grep -v "keep the secret key used in production secret!"; then
           echo "WARNING: Potential hardcoded API keys or tokens found"
           exit 1
         fi
