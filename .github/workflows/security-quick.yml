@@ -38,7 +38,7 @@ jobs:
         echo "Checking for common security issues..."
         
         # Verificar que no hay contraseñas hardcodeadas
-        if grep -r -i "password.*=" . --include="*.py" --include="*.js" --include="*.html" | grep -v "password.*None" | grep -v "password.*''"; then
+        if grep -r -i "password.*=" . --include="*.py" --include="*.js" --include="*.html" | grep -v "password.*None" | grep -v "password.*''" | grep -v "AUTH_PASSWORD_VALIDATORS"; then
           echo "WARNING: Potential hardcoded passwords found"
           exit 1
         fi
