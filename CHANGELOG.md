@@ -1,3 +1,9 @@
+## v0.5.0 (2025-12-01)
+
+### Feat
+
+- **welcom.html**: changes the welcome page adding cards (#61)
+
 ## v0.4.0 (2025-11-25)
 
 ### Feat
