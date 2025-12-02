@@ -676,10 +676,10 @@ function onMapMoveEnd() {
     // Habilitar el botón "Cargar Datos" cuando el usuario mueva el mapa
     if (!isProgrammaticMove) {
         setLoadDataButtonState(true);
+        updateBboxFromMap();
     }
 
     if (autoUpdateEnabled && !isProgrammaticMove) {
-        updateBboxFromMap();
         // Cargar datos automáticamente después de actualizar el bbox
         loadData();
     }
