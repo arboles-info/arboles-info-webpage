@@ -225,7 +225,7 @@ async def get_trees(request: HttpRequest):
         logger.info(f"Área del bbox: {area:.6f}")
         
         if area > 0.01:  # Área muy grande
-            limit = min(limit, 200)
+            limit = min(limit, 1000)
             logger.warning(f"Área muy grande detectada, limitando a {limit} elementos")
         elif area > 0.005:  # Área grande
             limit = min(limit, 500)
@@ -335,7 +335,7 @@ async def get_stumps(request: HttpRequest):
         logger.info(f"Área del bbox: {area:.6f}")
         
         if area > 0.01:  # Área muy grande
-            limit = min(limit, 200)
+            limit = min(limit, 1000)
             logger.warning(f"Área muy grande detectada, limitando a {limit} elementos")
         elif area > 0.005:  # Área grande
             limit = min(limit, 500)
