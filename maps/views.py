@@ -19,8 +19,10 @@ from pydantic import BaseModel
 logger = logging.getLogger(__name__)
 
 # Configuración de la API de Overpass
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_API_DE_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_API_MAILRU_URL = "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
 
+OVERPASS_URL = OVERPASS_API_MAILRU_URL
 
 # Modelos Pydantic (mantenidos de FastAPI)
 class Tree(BaseModel):
