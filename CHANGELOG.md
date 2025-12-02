@@ -1,3 +1,9 @@
+## v0.6.2 (2025-12-02)
+
+### Fix
+
+- added update lat and long when map is moved (#64)
+
 ## v0.6.1 (2025-12-02)
 
 ### Fix
