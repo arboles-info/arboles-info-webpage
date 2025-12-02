@@ -1,3 +1,9 @@
+## v0.6.0 (2025-12-02)
+
+### Feat
+
+- **maps/views.py**: changes overpass api for maps.mail.ru (#62)
+
 ## v0.5.0 (2025-12-01)
 
 ### Feat
