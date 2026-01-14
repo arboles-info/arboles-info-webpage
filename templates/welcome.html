@@ -175,6 +175,135 @@
         .features-grid {
             grid-template-columns: 1fr;
         }
+        
+        .collaborative-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .join-list {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Collaborative Section */
+    .collaborative-section {
+        margin-top: 60px;
+    }
+
+    .collaborative-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .collab-card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border-left: 5px solid #4CAF50;
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .collab-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .collab-icon {
+        font-size: 2.5rem;
+        flex-shrink: 0;
+    }
+
+    .collab-content h3 {
+        margin: 0 0 10px 0;
+        color: #2c5530;
+        font-size: 1.1rem;
+    }
+
+    .collab-content p {
+        margin: 0;
+        color: #555;
+        line-height: 1.5;
+        font-size: 0.95rem;
+    }
+
+    /* Join Section */
+    .join-section {
+        margin-top: 60px;
+        background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+        border-radius: 20px;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #d1e8ff;
+    }
+
+    .join-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .join-list {
+        list-style: none;
+        padding: 0;
+        margin: 30px 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .join-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255,255,255,0.6);
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .join-icon {
+        font-size: 1.5rem;
+        background: #fff;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .join-text {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .join-cta {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .github-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #24292e;
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .github-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(36, 41, 46, 0.3);
     }
 </style>
 {% endblock %}
@@ -237,43 +366,80 @@
         </div>
     </div>
 
-    <div class="features" style="margin-top: 40px;">
-        <h2>🤝 Carácter Colaborativo de la Herramienta</h2>
-        <div class="feature">
-            <strong>🌍 Datos de la comunidad:</strong> Toda la información proviene de voluntarios que mapean árboles en
-            OpenStreetMap
-        </div>
-        <div class="feature">
-            <strong>🔄 Información actualizada:</strong> Los datos se actualizan constantemente gracias a la
-            contribución de mapeadores de todo el mundo
-        </div>
-        <div class="feature">
-            <strong>📈 Crecimiento continuo:</strong> Cada día se añaden nuevos árboles y tocones al mapa global
-        </div>
-        <div class="feature">
-            <strong>🌱 Conciencia ambiental:</strong> La herramienta fomenta el conocimiento y cuidado del patrimonio
-            arbóreo urbano
+    <div class="collaborative-section">
+        <h2 style="text-align: center; margin-bottom: 30px; color: #2c5530; font-size: 2rem;">
+            🤝 Carácter Colaborativo
+        </h2>
+        <div class="collaborative-grid">
+            <div class="collab-card">
+                <span class="collab-icon">🌍</span>
+                <div class="collab-content">
+                    <h3>Datos de la comunidad</h3>
+                    <p>Toda la información proviene de voluntarios que mapean árboles en OpenStreetMap.</p>
+                </div>
+            </div>
+            
+            <div class="collab-card">
+                <span class="collab-icon">🔄</span>
+                <div class="collab-content">
+                    <h3>Información actualizada</h3>
+                    <p>Los datos se actualizan constantemente gracias a la contribución global.</p>
+                </div>
+            </div>
+
+            <div class="collab-card">
+                <span class="collab-icon">📈</span>
+                <div class="collab-content">
+                    <h3>Crecimiento continuo</h3>
+                    <p>Cada día se añaden nuevos árboles y tocones al mapa global.</p>
+                </div>
+            </div>
+
+            <div class="collab-card">
+                <span class="collab-icon">🌱</span>
+                <div class="collab-content">
+                    <h3>Conciencia ambiental</h3>
+                    <p>Fomentamos el conocimiento y cuidado del patrimonio arbóreo urbano.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="features" style="margin-top: 40px; background-color: #f0f8ff; border-left: 4px solid #0066cc;">
-        <h2>🌱 Únete al Mapeo Colaborativo</h2>
-        <p>Esta herramienta es posible gracias a una <strong>comunidad global de mapeadores</strong> que contribuyen
-            voluntariamente a documentar el patrimonio arbóreo mundial. Tú también puedes formar parte:</p>
-        <ul style="margin: 15px 0; padding-left: 20px;">
-            <li><strong>Mapea árboles en tu zona:</strong> Añade árboles y tocones de tu barrio o ciudad a OpenStreetMap
-            </li>
-            <li><strong>Actualiza información existente:</strong> Mejora los datos de especies, altura, diámetro o
-                estado de salud</li>
-            <li><strong>Documenta cambios:</strong> Registra cuando se talan árboles o se plantan nuevos</li>
-            <li><strong>Comparte conocimiento:</strong> Ayuda a otros a identificar especies o características de
-                árboles</li>
-            <li><strong>Difunde la herramienta:</strong> Comparte esta plataforma con organizaciones ambientales y
-                ciudadanos interesados</li>
-        </ul>
-        <p>Visita nuestro <a href="https://github.com/arboles-info/arboles-info-webpage" target="_blank"
-                rel="noopener noreferrer">repositorio en GitHub</a> para conocer más sobre el proyecto y cómo contribuir
-            al desarrollo de la herramienta.</p>
+    <div class="join-section">
+        <div class="join-content">
+            <h2 style="text-align: center; color: #0066cc; margin-bottom: 20px;">🌱 Únete al Mapeo Colaborativo</h2>
+            <p style="text-align: center; max-width: 600px; margin: 0 auto 30px; color: #555; font-size: 1.1rem;">
+                Esta herramienta es posible gracias a una <strong>comunidad global</strong>. ¡Tú también puedes ser parte del cambio!
+            </p>
+            
+            <div class="join-list">
+                <div class="join-item">
+                    <span class="join-icon">📍</span>
+                    <span class="join-text">Mapea árboles en tu zona</span>
+                </div>
+                <div class="join-item">
+                    <span class="join-icon">✏️</span>
+                    <span class="join-text">Actualiza datos existentes</span>
+                </div>
+                <div class="join-item">
+                    <span class="join-icon">📝</span>
+                    <span class="join-text">Documenta talas y cambios</span>
+                </div>
+                <div class="join-item">
+                    <span class="join-icon">🎓</span>
+                    <span class="join-text">Comparte conocimiento</span>
+                </div>
+            </div>
+
+            <div class="join-cta">
+                <a href="https://github.com/arboles-info/arboles-info-webpage" target="_blank" rel="noopener noreferrer" class="github-button">
+                    <svg height="24" viewBox="0 0 16 16" version="1.1" width="24" aria-hidden="true" style="fill: white;">
+                        <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    </svg>
+                    Colabora en GitHub
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
