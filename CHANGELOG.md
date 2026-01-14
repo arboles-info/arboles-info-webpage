@@ -1,3 +1,9 @@
+## v0.7.0 (2026-01-14)
+
+### Feat
+
+- Introduce new 'osm' Django app and add extensive static files for admin, GIS, and third-party libraries. (#68)
+
 ## v0.6.2 (2025-12-02)
 
 ### Fix
