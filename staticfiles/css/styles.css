@@ -1,0 +1,801 @@
+/* Mapa de árboles y tocones - Estilos CSS */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.header {
+    background: linear-gradient(135deg, #2c5530, #4a7c59);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 2rem;
+}
+
+/* Estilos específicos para el título del header - mayor especificidad */
+.header .clickable-title,
+header .clickable-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    position: relative;
+    color: white !important; /* Asegurar que siempre sea blanco */
+}
+
+.header .clickable-title:hover,
+header .clickable-title:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.header .info-icon,
+header .info-icon {
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.header .clickable-title:hover .info-icon,
+header .clickable-title:hover .info-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.controls-container {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.hamburger-menu {
+    background: #4a7c59;
+    border: none;
+    padding: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1003;
+}
+
+.hamburger-menu:hover {
+    background: #3a6b49;
+    transform: scale(1.05);
+}
+
+.hamburger-line {
+    width: 24px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.controls {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem 2rem 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: absolute;
+    top: calc(100% + 5rem);
+    left: 1rem;
+    width: 350px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    z-index: 1002;
+    max-height: 80vh;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+}
+
+.controls.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.controls.hide {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+}
+
+/* En desktop, los controles siempre están expandidos */
+@media (min-width: 769px) {
+    .hamburger-menu {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1003;
+    }
+    
+    .controls {
+        position: absolute;
+        top: calc(100% + 5rem);
+        left: 1rem;
+        width: 350px;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        z-index: 1002;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        padding: 2rem 2rem 1rem 2rem;
+    }
+    
+    .controls.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    
+    .controls.hide {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+    }
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.control-group select,
+.control-group input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.control-group input[type="checkbox"] {
+    width: auto;
+    min-height: auto;
+    margin-right: 0.5rem;
+    transform: scale(1.2); /* Hacer los checkboxes más grandes */
+}
+
+.btn {
+    background: #4a7c59;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background: #3a6b49;
+}
+
+.btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+
+
+/* Mejoras para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 48px;
+        padding: 1rem 1.5rem;
+    }
+    
+    .control-group input,
+    .control-group select {
+        min-height: 44px;
+        padding: 0.75rem;
+    }
+    
+    .btn:hover {
+        background: #4a7c59; /* Mantener el color original en dispositivos táctiles */
+    }
+    
+    .clickable-title {
+        min-height: 60px;
+        padding: 1rem;
+        border-radius: 10px;
+    }
+    
+    .clickable-title:active {
+        transform: scale(0.98);
+        transition: all 0.1s ease;
+    }
+}
+
+.map-container {
+    height: calc(100vh - 120px);
+    position: relative;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 80px;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+/* Controles de zoom de Leaflet - estilos mínimos */
+.leaflet-control-zoom {
+    z-index: 1000 !important;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, #2c5530, #4a7c59);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    margin: 0;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.footer-content p {
+    margin: 0.5rem 0;
+}
+
+.footer-content a {
+    color: white;
+    text-decoration: underline;
+    transition: opacity 0.3s ease;
+}
+
+.footer-content a:hover {
+    opacity: 0.8;
+}
+
+/* Estadísticas móviles */
+.mobile-stats {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 60px;
+    right: 10px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 0.75rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-stats-summary {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mobile-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    min-width: 60px;
+}
+
+.mobile-stat-item span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4a7c59;
+    margin-top: 0.25rem;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: none;
+}
+
+.loading.show {
+    display: block;
+}
+
+.stats {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 200px;
+}
+
+.stats h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c5530;
+    font-size: 1rem;
+}
+
+.stats p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.stats-summary {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.stats-breakdown {
+    margin-top: 0.5rem;
+}
+
+.stats-breakdown h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2c5530;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.species-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.species-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.85rem;
+}
+
+.species-item:last-child {
+    border-bottom: none;
+}
+
+.species-name {
+    flex: 1;
+    color: #333;
+    font-weight: 500;
+}
+
+.species-count {
+    background: #4a7c59;
+    color: white;
+    padding: 0.1rem 0.4rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+.no-data {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.legend {
+    position: absolute;
+    bottom: 30px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.legend h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c5530;
+    font-size: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+}
+
+.legend-item.clickable {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.legend-item.clickable:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.legend-item.clickable.hidden {
+    opacity: 0.5;
+}
+
+.legend-item.clickable.hidden .toggle-indicator {
+    opacity: 0.3;
+}
+
+.toggle-indicator {
+    margin-left: auto;
+    font-size: 0.9rem;
+    transition: opacity 0.2s ease;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+
+.tree-color { 
+    background-color: #2d5016; 
+}
+
+.stump-color { 
+    background-color: #8b4513; 
+}
+
+/* Estilos para popups */
+.popup-content {
+    min-width: 200px;
+}
+
+.popup-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.popup-tree-title {
+    color: #2c5530;
+}
+
+.popup-stump-title {
+    color: #8b4513;
+}
+
+.popup-info {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.popup-coordinates {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Estilos para mensajes de geolocalización */
+.location-message {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    font-size: 0.9rem;
+    font-weight: 500;
+    z-index: 1001;
+    margin-top: 0.5rem;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+}
+
+.location-message.success {
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    border-left: 4px solid #4caf50;
+}
+
+.location-message.error {
+    background: rgba(244, 67, 54, 0.9);
+    color: white;
+    border-left: 4px solid #f44336;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 0 1rem;
+    }
+    
+    .header-content {
+        padding: 0.75rem;
+    }
+    
+    .header .clickable-title,
+    header .clickable-title {
+        font-size: 1.6rem;
+        text-align: center;
+        padding: 0.75rem;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white !important;
+    }
+    
+    .header .info-icon,
+    header .info-icon {
+        font-size: 1.4rem;
+    }
+    
+    .hamburger-menu {
+        top: 0.75rem;
+        left: 0.75rem;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .controls {
+        padding: 1rem;
+        gap: 1rem;
+        left: 0.5rem;
+        right: 0.5rem;
+        width: auto;
+    }
+    
+    
+    
+    .controls-toggle {
+        display: flex; /* Mostrar solo en móviles */
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    /* Mostrar estadísticas móviles */
+    .mobile-stats {
+        display: block;
+    }
+    
+    /* Ajustar posición de la leyenda en móvil */
+    .legend {
+        bottom: 80px;
+    }
+    
+    /* Ocultar estadísticas laterales en móviles */
+    .stats {
+        display: none;
+    }
+    
+    .control-group {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .control-group input,
+    .control-group select {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        min-height: 44px; /* Tamaño mínimo recomendado para touch */
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        min-height: 48px; /* Tamaño mínimo recomendado para touch */
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats {
+        position: relative;
+        margin: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container {
+        padding: 0 0.75rem;
+    }
+    
+    .header-content {
+        padding: 0.5rem;
+    }
+    
+    .clickable-title {
+        font-size: 1.4rem;
+        padding: 1rem 0.75rem;
+        min-height: 64px;
+        border-radius: 10px;
+    }
+    
+    .info-icon {
+        font-size: 1.3rem;
+    }
+    
+    .controls {
+        padding: 0.75rem;
+        gap: 0.5rem;
+        left: 0.25rem;
+        right: 0.25rem;
+        width: auto;
+    }
+    
+    
+    
+    .control-group label {
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .control-group input,
+    .control-group select {
+        padding: 0.875rem;
+        font-size: 1rem;
+        border-radius: 6px;
+    }
+    
+    .btn {
+        padding: 1rem 0.75rem;
+        font-size: 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+    
+    .stats,
+    .legend {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .footer {
+        padding: 1.5rem 0;
+        font-size: 0.9rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+    
+    .map-container {
+        height: calc(100vh - 150px);
+        margin-bottom: 100px;
+    }
+}
+
+/* Regla específica para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .map-container {
+        height: calc(100vh - 170px);
+        margin-bottom: 100px;
+    }
+}
+
+/* Tarjeta de error temporal */
+.error-card {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(244, 67, 54, 0.95);
+    color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 1100;
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.error-card.hide {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+}
+
+
