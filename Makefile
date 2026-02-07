@@ -209,6 +209,86 @@ test: check-app-deps ## Ejecutar tests Django (si existen)
 		$(PYTHON) $(MANAGE) test; \
 	fi
 
+# Comandos BDD/Behave
+behave: check-app-deps ## Ejecutar tests BDD con behave
+	@echo "$(YELLOW)🥒 Ejecutando tests BDD (Behave)...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/behave; \
+	else \
+		behave; \
+	fi
+
+behave-wip: check-app-deps ## Ejecutar tests BDD work-in-progress
+	@echo "$(YELLOW)🥒 Ejecutando tests BDD @wip...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/behave --tags=wip; \
+	else \
+		behave --tags=wip; \
+	fi
+
+behave-critical: check-app-deps ## Ejecutar solo tests críticos
+	@echo "$(YELLOW)🥒 Ejecutando tests críticos...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/behave --tags=critical; \
+	else \
+		behave --tags=critical; \
+	fi
+
+behave-no-slow: check-app-deps ## Ejecutar tests BDD excluyendo tests lentos
+	@echo "$(YELLOW)🥒 Ejecutando tests BDD (sin lentos)...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/behave --tags=-slow; \
+	else \
+		behave --tags=-slow; \
+	fi
+
+pytest: check-app-deps ## Ejecutar tests con pytest
+	@echo "$(YELLOW)🧪 Ejecutando tests con pytest...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/pytest; \
+	else \
+		pytest; \
+	fi
+
+test-unit: check-app-deps ## Ejecutar solo tests unitarios
+	@echo "$(YELLOW)🧪 Ejecutando tests unitarios...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/pytest -m unit; \
+	else \
+		pytest -m unit; \
+	fi
+
+test-integration: check-app-deps ## Ejecutar solo tests de integración
+	@echo "$(YELLOW)🧪 Ejecutando tests de integración...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/pytest -m integration; \
+	else \
+		pytest -m integration; \
+	fi
+
+test-all: check-app-deps ## Ejecutar todos los tests (Django + BDD + pytest)
+	@echo "$(YELLOW)🧪 Ejecutando todos los tests...$(NC)"
+	@$(MAKE) test
+	@$(MAKE) behave
+	@$(MAKE) pytest
+
+test-coverage: check-app-deps ## Ejecutar tests con reporte de cobertura
+	@echo "$(YELLOW)📊 Ejecutando tests con cobertura...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/pytest --cov=maps --cov=osm --cov-report=html --cov-report=term; \
+	else \
+		pytest --cov=maps --cov=osm --cov-report=html --cov-report=term; \
+	fi
+	@echo "$(GREEN)✅ Reporte de cobertura generado en htmlcov/index.html$(NC)"
+
+test-watch: check-app-deps ## Ejecutar tests en modo watch (re-ejecuta al detectar cambios)
+	@echo "$(YELLOW)👀 Ejecutando tests en modo watch...$(NC)"
+	@if [ -f "$(VENV_BIN)/python" ]; then \
+		$(VENV_BIN)/pytest-watch; \
+	else \
+		pytest-watch; \
+	fi
+
 migrate: check-app-deps ## Ejecutar migraciones de Django
 	@echo "$(YELLOW)🔄 Ejecutando migraciones...$(NC)"
 	@if [ -f "$(VENV_BIN)/python" ]; then \

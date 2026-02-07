@@ -1,188 +1,126 @@
-# OpenTrees Web
+# Árboles Info Maps 🌳
 
-Una aplicación web para visualizar árboles y tocones usando datos de OpenStreetMap (OSM) a través de la API de Overpass.
+Una aplicación web desarrollada con **Django** para visualizar y gestionar información sobre árboles y tocones, utilizando datos de **OpenStreetMap (OSM)** y potentes capacidades de geolocalización.
 
 ## Características
 
-- 🌳 Visualización de árboles y tocones en un mapa interactivo
-- 🗺️ Interfaz web moderna con Leaflet.js
-- 🔍 Filtrado por especie y área geográfica
-- 📊 Estadísticas en tiempo real
-- 🚀 API REST con FastAPI
-- 📱 Diseño responsive
+- 🌳 **Visualización Geoespacial**: Mapa interactivo con Leaflet.js para mostrar árboles y tocones.
+- 🗺️ **Integración OSM**: Obtención de datos en tiempo real mediante la API de Overpass.
+- 📍 **GeoDjango**: Uso de capacidades espaciales avanzadas con PostGIS.
+- 📱 **Diseño Responsive**: Interfaz adaptada a dispositivos móviles y escritorio.
+- 🔒 **Seguridad**: Escaneos de seguridad integrados y mejores prácticas de Django.
+- 🐳 **Dockerizado**: Entorno de desarrollo y producción listo para usar con Docker Compose.
 
 ## Tecnologías
 
-- **Backend**: FastAPI (Python)
-- **Frontend**: HTML5, CSS3, JavaScript, Leaflet.js
-- **Datos**: OpenStreetMap via Overpass API
-- **Servidor**: Uvicorn
+- **Backend**: Django 5.2+ (Python)
+- **Base de Datos**: SQLite (desarrollo local) / PostgreSQL + PostGIS (producción)
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+), Leaflet.js
+- **Seguridad**: Semgrep, Safety, Bandit (vía scripts integrados)
+- **Despliegue**: WhiteNoise para estáticos, Gunicorn, Docker
 
-## Instalación
+## Instalación y Configuración
 
-### Verificar dependencias del sistema
+El proyecto utiliza un `Makefile` para orquestar todas las tareas comunes.
 
-Primero, verifica qué dependencias están disponibles:
-
+### 1. Requisitos previos
+Verifica que tienes las dependencias necesarias:
 ```bash
 make check-deps
 ```
 
-### Opción 1: Con virtualenv (recomendado)
-
-Si tienes `python3-venv` instalado:
-
+### 2. Configuración del entorno
+Crea el entorno virtual e instala las dependencias:
 ```bash
 make setup
 ```
 
-### Opción 2: Sin virtualenv
-
-Si no tienes `python3-venv` pero sí `pip`:
-
+### 3. Base de datos y migraciones
+Prepara la base de datos (SQLite por defecto):
 ```bash
-make install-system
-```
-
-### Opción 3: Instalación manual
-
-Si no tienes `make` instalado:
-
-1. Instala pip (si no lo tienes):
-```bash
-sudo apt install python3-pip
-```
-
-2. Instala las dependencias:
-```bash
-pip3 install -r requirements.txt
-```
-
-3. Ejecuta el servidor:
-```bash
-python3 main.py
+make migrate
 ```
 
 ## Uso
 
-Una vez configurado, abre tu navegador y ve a:
+### Ejecución en desarrollo
+Para iniciar el servidor con recarga automática:
+```bash
+make dev
 ```
-http://localhost:8000
-```
+La aplicación estará disponible en `http://localhost:8000`.
 
-### Comandos disponibles
-
-- `make check-deps` - Verificar dependencias del sistema
-- `make setup` - Crear virtualenv e instalar dependencias
-- `make install` - Instalar dependencias en virtualenv existente
-- `make install-system` - Instalar dependencias del sistema (sin virtualenv)
-- `make run` - Levantar la aplicación
-- `make dev` - Modo desarrollo con recarga automática
-- `make clean` - Limpiar archivos temporales
-- `make clean-venv` - Eliminar virtualenv
-- `make test` - Ejecutar tests (si existen)
-- `make lint` - Verificar código con linters
-- `make format` - Formatear código
-- `make info` - Mostrar información del entorno
-- `make help` - Mostrar ayuda
-
-## API Endpoints
-
-### GET /
-Sirve la página principal de la aplicación.
-
-### GET /api/trees
-Obtiene árboles de OSM en un área específica.
-
-**Parámetros:**
-- `bbox` (opcional): Bounding box en formato "min_lat,min_lon,max_lat,max_lon"
-- `species` (opcional): Filtrar por especie específica
-- `limit` (opcional): Número máximo de resultados (default: 100)
-
-**Ejemplo:**
-```
-GET /api/trees?bbox=40.3,-3.8,40.5,-3.6&species=Quercus&limit=50
+### Docker Compose
+Si prefieres usar Docker (incluyendo base de datos PostgreSQL/PostGIS):
+```bash
+make compose-up
+make compose-migrate
 ```
 
-### GET /api/stumps
-Obtiene tocones de OSM en un área específica.
+## Comandos Principales
 
-**Parámetros:**
-- `bbox` (opcional): Bounding box en formato "min_lat,min_lon,max_lat,max_lon"
-- `species` (opcional): Filtrar por especie específica
-- `limit` (opcional): Número máximo de resultados (default: 100)
+### Desarrollo
+- `make run`: Inicia el servidor Django.
+- `make dev`: Servidor con recarga automática.
+- `make lint`: Verifica el estilo del código.
+- `make format`: Formatea el código automáticamente.
+- `make security-quick`: Ejecución rápida de herramientas de seguridad.
+- `make info`: Muestra información detallada del entorno.
+
+### Testing (BDD/Specifications)
+Este proyecto usa **Specification-Driven Development** con **Behave** (BDD):
+
+- `make behave`: Ejecuta todos los tests BDD.
+- `make behave-critical`: Ejecuta solo tests críticos.
+- `make behave-no-slow`: Ejecuta tests excluyendo los lentos.
+- `make pytest`: Ejecuta tests con pytest.
+- `make test-all`: Ejecuta todos los tests (Django + BDD + pytest).
+- `make test-coverage`: Ejecuta tests con reporte de cobertura.
+
+**Ver documentación completa**: [docs/BDD-GUIDE.md](docs/BDD-GUIDE.md)
+
+**Ejemplo de uso**:
+```bash
+# Ver todas las especificaciones
+ls features/*.feature
+
+# Ejecutar tests BDD
+make behave
+
+# Ejecutar solo tests críticos
+make behave-critical
+
+# Ver cobertura
+make test-coverage
+```
 
 ## Estructura del Proyecto
 
-```
-opentrees-web/
-├── main.py              # Aplicación FastAPI principal
-├── requirements.txt     # Dependencias de Python
-├── Makefile            # Makefile con comandos de desarrollo
-├── .gitignore          # Archivos a ignorar en Git
-├── static/
-│   └── index.html      # Frontend HTML con Leaflet.js
-└── README.md           # Este archivo
-```
+- `arboles_info_project/`: Configuración global de Django.
+- `maps/`: Aplicación principal de gestión de mapas y datos.
+- `osm/`: Módulo de integración con OpenStreetMap.
+- `features/`: Especificaciones BDD (Behavior-Driven Development).
+  - `*.feature`: Especificaciones en formato Gherkin.
+  - `steps/`: Implementaciones de los pasos de prueba.
+- `tests/`: Tests unitarios y de integración (pytest).
+  - `factories.py`: Generadores de datos de prueba.
+  - `conftest.py`: Configuración y fixtures de pytest.
+- `static/`: Archivos estáticos (CSS, JS logic).
+- `templates/`: Plantillas HTML.
+- `scripts/`: Utilidades de seguridad y mantenimiento.
+- `docs/`: Documentación del proyecto.
 
-## Modelos de Datos
+## Contribución
 
-### Tree
-- `id`: Identificador único
-- `lat`, `lon`: Coordenadas geográficas
-- `species`: Especie del árbol
-- `height`: Altura en metros
-- `diameter`: Diámetro en centímetros
-- `age`: Edad en años
-- `health`: Estado de salud
-- `last_updated`: Fecha de última actualización
-
-### Stump
-- `id`: Identificador único
-- `lat`, `lon`: Coordenadas geográficas
-- `species`: Especie del tocón
-- `diameter`: Diámetro en centímetros
-- `removal_date`: Fecha de tala
-- `reason`: Razón de la tala
-
-## Personalización
-
-### Cambiar el área por defecto
-Modifica las coordenadas en `main.py` en las funciones `get_trees()` y `get_stumps()`:
-
-```python
-# Bounding box por defecto (Madrid, España)
-min_lat, min_lon, max_lat, max_lon = 40.3, -3.8, 40.5, -3.6
-```
-
-### Añadir más filtros
-Puedes extender las consultas de Overpass para incluir más filtros como:
-- Estado de salud del árbol
-- Edad mínima/máxima
-- Altura mínima/máxima
-
-### Personalizar el mapa
-Modifica el archivo `static/index.html` para:
-- Cambiar el estilo del mapa
-- Añadir más capas
-- Personalizar los marcadores
-
-## Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Crea un fork del repositorio.
+2. Crea una rama para tu funcionalidad (`git checkout -b feature/nueva-funcionalidad`).
+3. Realiza tus cambios y asegúrate de que pasen los tests (`make test`).
+4. Haz commit de tus cambios.
+5. Abre un Pull Request.
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 
-## Agradecimientos
-
-- [OpenStreetMap](https://www.openstreetmap.org/) por los datos geográficos
-- [Overpass API](https://overpass-api.de/) por la API de consulta
-- [Leaflet](https://leafletjs.com/) por la librería de mapas
-- [FastAPI](https://fastapi.tiangolo.com/) por el framework web
-
+---
+*Desarrollado para la visualización y conservación del patrimonio arbóreo.*
