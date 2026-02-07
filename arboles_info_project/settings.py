@@ -21,67 +21,72 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-f_eh7@w+@x-(yb9!^59e)a&lxn1n-+gh4u%+cj52^ayt@v$6jj')
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "django-insecure-f_eh7@w+@x-(yb9!^59e)a&lxn1n-+gh4u%+cj52^ayt@v$6jj"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Por defecto True para desarrollo local, False en producción
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 # Por defecto permite localhost para desarrollo
 # En producción, permite IPs internas de DigitalOcean App Platform para health checks
-allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "")
 if allowed_hosts_env:
-    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+    ALLOWED_HOSTS = [
+        host.strip() for host in allowed_hosts_env.split(",") if host.strip()
+    ]
     # Si '*' está en la lista, permitir todos los hosts (útil para App Platform health checks)
-    if '*' in ALLOWED_HOSTS:
-        ALLOWED_HOSTS = ['*']
+    if "*" in ALLOWED_HOSTS:
+        ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.gis',  # GeoDjango para PostGIS
-    'django_extensions',  # Utilidades de desarrollo (runserver_plus con watchdog)
-    'maps',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.gis",  # GeoDjango para PostGIS
+    "django_extensions",  # Utilidades de desarrollo (runserver_plus con watchdog)
+    "behave_django",  # BDD testing framework
+    "maps",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Servir archivos estáticos en producción
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Servir archivos estáticos en producción
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'arboles_info_project.urls'
+ROOT_URLCONF = "arboles_info_project.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'arboles_info_project.wsgi.application'
+WSGI_APPLICATION = "arboles_info_project.wsgi.application"
 
 
 # Database
@@ -89,33 +94,33 @@ WSGI_APPLICATION = 'arboles_info_project.wsgi.application'
 
 # Usar PostgreSQL con PostGIS si están configuradas las variables de entorno
 # De lo contrario, usar SQLite para desarrollo local sin Docker
-db_host = os.environ.get('DB_HOST', '')
-db_name = os.environ.get('DB_NAME', '')
-db_user = os.environ.get('DB_USER', '')
-db_password = os.environ.get('DB_PASSWORD', '')
-db_port = os.environ.get('DB_PORT', '5432')
+db_host = os.environ.get("DB_HOST", "")
+db_name = os.environ.get("DB_NAME", "")
+db_user = os.environ.get("DB_USER", "")
+db_password = os.environ.get("DB_PASSWORD", "")
+db_port = os.environ.get("DB_PORT", "5432")
 
 if db_host and db_name and db_user and db_password:
     # Configuración para PostgreSQL con PostGIS
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.postgis',
-            'NAME': db_name,
-            'USER': db_user,
-            'PASSWORD': db_password,
-            'HOST': db_host,
-            'PORT': db_port,
-            'OPTIONS': {
-                'connect_timeout': 10,
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "NAME": db_name,
+            "USER": db_user,
+            "PASSWORD": db_password,
+            "HOST": db_host,
+            "PORT": db_port,
+            "OPTIONS": {
+                "connect_timeout": 10,
             },
         }
     }
 else:
     # Configuración por defecto: SQLite (para desarrollo local sin Docker)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
@@ -128,12 +133,12 @@ import glob
 
 # Intentar encontrar la librería GDAL en ubicaciones comunes
 gdal_library_paths = [
-    '/usr/lib/x86_64-linux-gnu/libgdal.so*',
-    '/usr/lib/libgdal.so*',
-    '/usr/local/lib/libgdal.so*',
+    "/usr/lib/x86_64-linux-gnu/libgdal.so*",
+    "/usr/lib/libgdal.so*",
+    "/usr/local/lib/libgdal.so*",
 ]
 
-GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH', None)
+GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH", None)
 if not GDAL_LIBRARY_PATH:
     for pattern in gdal_library_paths:
         matches = glob.glob(pattern)
@@ -151,16 +156,16 @@ if not GDAL_LIBRARY_PATH:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -168,9 +173,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = "es-es"
 
-TIME_ZONE = 'Europe/Madrid'
+TIME_ZONE = "Europe/Madrid"
 
 USE_I18N = True
 
@@ -180,51 +185,51 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / "static",
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # WhiteNoise configuration for serving static files in production
 # https://whitenoise.readthedocs.io/
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Logging configuration
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
         },
-        'maps': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
+        "maps": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }
@@ -234,15 +239,19 @@ LOGGING = {
 # maneja SSL/TLS en el load balancer. El tráfico externo ya viene por HTTPS.
 # Los health checks internos usan HTTP y no deben ser redirigidos.
 if not DEBUG:
-    SECURE_SSL_REDIRECT = False  # Desactivado: DigitalOcean maneja SSL en el load balancer
-    SESSION_COOKIE_SECURE = True  # Mantener cookies seguras (el load balancer envía HTTPS)
+    SECURE_SSL_REDIRECT = (
+        False  # Desactivado: DigitalOcean maneja SSL en el load balancer
+    )
+    SESSION_COOKIE_SECURE = (
+        True  # Mantener cookies seguras (el load balancer envía HTTPS)
+    )
     CSRF_COOKIE_SECURE = True  # Mantener cookies CSRF seguras
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
+    X_FRAME_OPTIONS = "DENY"
 else:
     # Desactivar todas las redirecciones SSL y HSTS en desarrollo
     SECURE_SSL_REDIRECT = False
